@@ -3,7 +3,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content='width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, user-scalable=no, shrink-to-fit=yes'>
-    <title>Unity WebGL Player | 0723_BreconMuseum</title>
+    <title>0723_BreconMuseum</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="TemplateData/style.css">
     <style>
         html{
@@ -39,12 +41,12 @@
 		<imagetarget id='Houses to Hovels' src='targets/Houses to Hovels.jpg'></imagetarget>
 		<imagetarget id='The Climb' src='targets/The Climb.jpg'></imagetarget>
 
-    <video id="webcam-video" muted autoplay playsinline style="width:1px;position:absolute"></video>
-    <canvas id="video-canvas" style="width:100%; height:100%; object-fit:cover; position:absolute"></canvas>
+    <video id="webcam-video" muted autoplay playsinline class="w-px absolute"></video>
+    <canvas id="video-canvas" class="w-full h-full object-cover absolute"></canvas>
     <div id="startARDiv" class="ctaDiv">
-        <select id="chooseCamSel" style="display: none;" onchange="SelectCam()"></select>
-        <p style="text-align: center; width:60vw;">This augmented reality experience requires access to your device's camera</p>
-        <button id="startARButton" onclick="StartAR()" style="display:none">ALLOW ACCESS</button>
+        <select id="chooseCamSel" class="px-2 py-1" style="display: none;" onchange="SelectCam()"></select>
+        <p class="text-center w-[60vw] py-4">This augmented reality experience requires access to your device's camera</p>
+        <button id="startARButton" class="px-2 py-1"  onclick="StartAR()" style="display:none">ALLOW ACCESS</button>
     </div>
     <div id="screenshotDiv" style="display: none;" class="ctaDiv">
         <div style="position:relative; background-color:white; padding:10px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 6px 20px 0 rgba(0, 0, 0, 0.25);">
@@ -67,7 +69,6 @@
     <div id="unity-container" class="unity-mobile">
         <canvas id="unity-canvas" style="width: 100%; height: 100%; background: #0000; z-index: -99"></canvas>
         <div id="unity-loading-bar">
-            <div id="unity-logo"></div>
             <div id="unity-progress-bar-empty">
                 <div id="unity-progress-bar-full"></div>
             </div>

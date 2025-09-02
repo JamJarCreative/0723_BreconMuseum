@@ -8,6 +8,31 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="TemplateData/style.css">
     <style>
+        /* Font family */
+        /* Light (300) */
+        @font-face {
+          font-family: 'WalesSans';
+          src: url('/assets/WalesSans/Body-Light.otf') format('opentype');
+          font-weight: 300;
+          font-style: normal;
+          font-display: swap;
+        }
+        /* Regular (400) */
+        @font-face {
+          font-family: 'WalesSans';
+          src: url('/assets/WalesSans/Body-Regular.otf') format('opentype');
+          font-weight: 400;
+          font-style: normal;
+          font-display: swap;
+        }
+        /* Medium (500) */
+        @font-face {
+          font-family: 'WalesSans';
+          src: url('/assets/WalesSans/Body-Medium.otf') format('opentype');
+          font-weight: 500;
+          font-style: normal;
+          font-display: swap;
+        }
         html{
             height: -webkit-fill-available;
         }
@@ -19,22 +44,13 @@
             width: 100vw;
             overflow: hidden;
         }
-        .ctaDiv {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: absolute;
-            left: 0;
-            right: 0;
-            top: 0;
-            bottom: 0;
-            background: #fffa;
-            z-index: 99;
+        #custom-loading {
+            background-size: cover;
+            background-position: 0 25%;
         }
     </style>
 </head>
-<body>
+<body class="bg-[#000] font-[WalesSans]">
     <!--IMAGETARGETS-->
 		<imagetarget id='Ballot Box' src='targets/Ballot Box.jpg'></imagetarget>
 		<imagetarget id='Cresset Stone' src='targets/Cresset Stone.jpg'></imagetarget>
@@ -43,11 +59,6 @@
 
     <video id="webcam-video" muted autoplay playsinline class="w-px absolute"></video>
     <canvas id="video-canvas" class="w-full h-full object-cover absolute"></canvas>
-    <div id="startARDiv" class="ctaDiv">
-        <select id="chooseCamSel" class="px-2 py-1" style="display: none;" onchange="SelectCam()"></select>
-        <p class="text-center w-[60vw] py-4">This augmented reality experience requires access to your device's camera</p>
-        <button id="startARButton" class="px-2 py-1"  onclick="StartAR()" style="display:none">ALLOW ACCESS</button>
-    </div>
     <div id="screenshotDiv" style="display: none;" class="ctaDiv">
         <div style="position:relative; background-color:white; padding:10px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 6px 20px 0 rgba(0, 0, 0, 0.25);">
             <img id="screenshotImg" src="" alt="screenshot" style="width:80vw; height:80vh">
@@ -67,6 +78,21 @@
         <p id="errorText" style="text-align: center; width:60vw; color:white"></p>
     </div>
     <div id="unity-container" class="unity-mobile">
+        <div id="custom-loading" class="w-full h-full p-4 px-5 pb-8 bg-[url(/assets/background.ladder.svg)] flex flex-col justify-between">
+            <div id="loading-header">
+                <h3 class="py-6 text-2xl font-medium">
+                    <span class="text-[#84d2c0]">Stori</span><span class="text-[#ffffff]">Powys</span>
+                </h3>
+                <h1 class="text-5xl font-medium text-[#fbe8d4] w-[50%]">Y Gaer Museum</h1>
+                <h2 class="text-2xl py-2 font-light text-[#d7feff]">AR Experience</h2>
+            </div>
+            <div id="overlay-images" class="h-full w-full absolute">
+                <div id="bird" class="bg-[url(/assets/bird.svg)] bg-size-[100%] bg-no-repeat size-[48px] absolute top-[6dvh] left-[50dvw]"></div>
+            </div>
+            <div id="loading-footer" class="mb-8 flex justify-center items-center">
+                <h2 class="text-2xl uppercase text-[#3d585c]">Loading...</h2>
+            </div>
+        </div>
         <canvas id="unity-canvas" style="width: 100%; height: 100%; background: #0000; z-index: -99"></canvas>
         <div id="unity-loading-bar">
             <div id="unity-progress-bar-empty">
@@ -93,9 +119,7 @@
                     ShowError("Failed to initialize the experience.");
                     return;
                 }
-                
                 await LoadWebcams();
-                document.getElementById("startARButton").style.display = "block";
                 window.permissionsGranted = IsCameraPermissionGranted();
             }
             initialize();
@@ -103,11 +127,11 @@
             var canvas = document.querySelector("#unity-canvas");
             var loadingBar = document.querySelector("#unity-loading-bar");
             var progressBarFull = document.querySelector("#unity-progress-bar-full");
+            var customLoading = document.querySelector("#custom-loading");
             function StartAR() {
                 canvas.style.width = window.innerWidth + "px";
                 canvas.style.height = window.innerHeight + "px";
-                
-                document.getElementById("startARDiv").style.display = "none";
+                loadingBar.style.display = "none";
                 createUnityInstance(document.querySelector("#unity-canvas"), {
                     dataUrl: "Build/0723_BreconMuseum.data.unityweb",
                     frameworkUrl: "Build/0723_BreconMuseum.framework.js.unityweb",
@@ -127,9 +151,8 @@
                     window.unityInstance = unityInstance;
                     if(window.permissionsGranted)
                         RequestWebcam();
-                    loadingBar.style.display = "none";
+                    customLoading.style.display = "none";
                 });
-                loadingBar.style.display = "block";
             }
             //Set Facing Mode here ('environment', 'user', '')
 		window.unityFacingMode = "environment"
@@ -154,11 +177,11 @@
                     console.error("getUserMedia error - " , err);
                     ShowError("Failed to start the experience. Camera permission was denied");
                     window.requestingForPermissions = false;
-                }           
+                }
             }
             function StopWebcam(){
                 console.log("stopping camera");
-                window.webcamStream.getTracks().forEach(track => track.stop());    
+                window.webcamStream.getTracks().forEach(track => track.stop());
             }
             async function StartWebcam(){
                 console.log("StartWebcam")
@@ -181,12 +204,12 @@
                     catch(err){
                         console.error("Webcam failed to start - ", err);
                         window.unityInstance.SendMessage('ARCamera', 'OnStartWebcamFail');
-                    }   
+                    }
                 }
                 else{
                     console.error("Webcam failed to start - permission not yet granted");
                     window.unityInstance.SendMessage('ARCamera', 'OnStartWebcamFail');
-                }  
+                }
             }
             async function LoadWebcams(){
                 let camDevices = [];
@@ -206,37 +229,18 @@
                         else{
                             //back and front
                             camDevices.push(mediaDevice);
-                        }   
-                        
+                        }
                         ctr++;
                     }
                 });
-                var select = document.getElementById("chooseCamSel");
-                select.style.display = "block";
-                var count = 0;
                 //reverse array because some Android phones can't distinguish front and back cams at first load
                 //and when this happens, most of the time, front cam goes first and back cam goes last
                 camDevices = camDevices.reverse();
-                camDevices.forEach(mediaDevice => {
-                    const option = document.createElement('option');
-                    option.value = mediaDevice.deviceId;
-                    let label = `Camera ${count}`;
-                    if (mediaDevice.label) {
-                        label = mediaDevice.label
-                    }
-                    const textNode = document.createTextNode(label);
-                    option.appendChild(textNode);
-                    select.appendChild(option);
-                    count++;
-                });
-                iTracker.WEBCAM_NAME = select.options[select.selectedIndex].innerHTML;
-            }
-            function SelectCam(){
-                var select = document.getElementById("chooseCamSel");
-                window.deviceId = select.value;
-                window.WEBCAM_SETTINGS.video['deviceId'] = deviceId;
-                //console.log(window.WEBCAM_SETTINGS);
-                iTracker.WEBCAM_NAME = select.options[select.selectedIndex].innerHTML;
+                if(camDevices.length > 0) {
+                    window.deviceId = camDevices[0].deviceId;
+                }
+                iTracker.WEBCAM_NAME = "Camera";// select.options[select.selectedIndex].innerHTML;
+                StartAR();
             }
             async function FlipCam(){
                 arCamera.stopWebcam();
@@ -290,13 +294,12 @@
             function ShowConfirmUrl(url){
                 document.getElementById("confirmUrlDiv").style.display = "flex";
                 window.newUrlString = url;
-                document.getElementById("confirmUrlText").innerText = "Are you sure you want to visit " + url;                
+                document.getElementById("confirmUrlText").innerText = "Are you sure you want to visit " + url;
             }
             window.ITRACKER_GLOBALS = {
                 //place global settings here
                 INTERNAL_SMOOTHFACTOR_POS: .075,
             }
-            
     </script>
 </body>
 </html>

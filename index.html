@@ -70,8 +70,8 @@
             </div>
         </div>
     </div>
-    <div id="errorDiv" class="ctaDiv" style="display: none; background:#aaa">
-        <p id="errorText" style="text-align: center; width:60vw; color:white"></p>
+    <div id="errorDiv" style="display: none;" class="bg-[#354b4f] justify-center">
+        <p id="errorText" class="text-center text-white"></p>
     </div>
     <div id="unity-container" class="unity-mobile">
         <div id="custom-loading" class="
@@ -133,8 +133,11 @@
                      sm:[@media(orientation:portrait)]:bg-position-[100%_100%]
                      size-[100%]"></div>
             </div>
-            <div id="loading-footer" class="mb-8 landscape:mb-16 flex justify-center items-center">
-                <h2 class="text-2xl uppercase portrait:text-[#3d585c] landscape:text-[#fcecdb]">Loading...</h2>
+            <div id="loading-footer" class="mb-8 landscape:mb-16 flex justify-center items-center flex-col">
+                <h2 class="text-1xl uppercase portrait:text-[#3d585c] landscape:text-[#fcecdb]">Loading...</h2>
+                <div class="w-40 h-3 border-2 portrait:border-[#3d585c] landscape:border-[#fcecdb] overflow-hidden rounded">
+                    <div id="jam-progress-bar" class="h-3 portrait:bg-[#354b4f] landscape:bg-[#fcecdb] w-0 transition-all duration-500"></div>
+                </div>
             </div>
         </div>
         <canvas id="unity-canvas" style="width: 100%; height: 100%; background: #0000; z-index: -99"></canvas>
@@ -172,6 +175,8 @@
             var loadingBar = document.querySelector("#unity-loading-bar");
             var progressBarFull = document.querySelector("#unity-progress-bar-full");
             var customLoading = document.querySelector("#custom-loading");
+            var customProgressBar = document.querySelector("#jam-progress-bar");
+            customProgressBar.style.width = "0%";
             function StartAR() {
                 canvas.style.width = window.innerWidth + "px";
                 canvas.style.height = window.innerHeight + "px";
@@ -190,6 +195,7 @@
                     },
                     (progress) => {
                         progressBarFull.style.width = 100 * progress + "%";
+                        customProgressBar.style.width = 100 * progress + "%";
                     }
                 ).then((unityInstance) => {
                     window.unityInstance = unityInstance;
@@ -219,7 +225,7 @@
                 catch (err) {
                     //user denied camera permission - show error panel
                     console.error("getUserMedia error - " , err);
-                    ShowError("Failed to start the experience. Camera permission was denied");
+                    ShowError("Failed to start the experience.<br />Camera permission was denied<br /><br />Wedi methu dechrau'r profiad.<br/>Gwrthodwyd caniatâd camera");
                     window.requestingForPermissions = false;
                 }
             }

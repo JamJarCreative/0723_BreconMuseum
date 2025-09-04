@@ -199,8 +199,8 @@
                     }
                 ).then((unityInstance) => {
                     window.unityInstance = unityInstance;
-                    if(window.permissionsGranted)
-                        RequestWebcam();
+//                    if(window.permissionsGranted)
+//                        RequestWebcam();
                     customLoading.style.display = "none";
                 });
             }
@@ -220,7 +220,7 @@
                     console.log("Webcam access granted");
                     requestingForPermissions = false;
                     // Immediately stop the stream to release the camera
-                    StopWebcam();
+                    // StopWebcam();
                 }
                 catch (err) {
                     //user denied camera permission - show error panel
